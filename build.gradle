@@ -1,0 +1,61 @@
+group 'com.hbo'
+version '1.0-SNAPSHOT'
+
+
+buildscript {
+    repositories {
+        mavenLocal()
+	    mavenCentral()
+	    jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.3.RELEASE")
+    }
+}
+
+apply plugin: 'scala'
+apply plugin: 'java'
+apply plugin: "groovy"
+apply plugin: 'findbugs'
+apply plugin: 'jacoco'
+apply plugin: 'maven-publish'
+apply plugin: 'org.springframework.boot'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile ('org.springframework.boot:spring-boot-starter-web:1.5.1.RELEASE') {
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    compile 'org.springframework.boot:spring-boot-starter-undertow'
+
+    ext.gatlingVersion = '2.1.7'
+    testCompile group: 'io.gatling', name: 'gatling-app', version: gatlingVersion
+    testCompile group: 'io.gatling', name: 'gatling-recorder', version: gatlingVersion
+    testCompile group: 'io.gatling.highcharts', name: 'gatling-charts-highcharts', version: gatlingVersion
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+task gatling(dependsOn: 'compileTestScala') << {
+    javaexec {
+        main = 'io.gatling.app.Gatling'
+        classpath = sourceSets.test.output + sourceSets.test.runtimeClasspath
+        args    '-sf', sourceSets.test.output,            //source folder
+                '-bf', sourceSets.test.output.classesDir, //target folder where gatling will compile the simulation
+                '-s', 'RobotsLoadTest',                   //The simulation to run
+                '-rf', 'build/reports/gatling'            //place to put the report
+    }
+}

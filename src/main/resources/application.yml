@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: service-registry
+
+
+logging:
+  level:
+    root: info
