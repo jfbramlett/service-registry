@@ -6,3 +6,5 @@ spring:
 logging:
   level:
     root: info
+
+registration: https://raw.githubusercontent.com/jfbramlett/service-registry/master/src/main/resources/services.properties

@@ -12,7 +12,7 @@ class ServiceLoadTest extends Simulation {
 
   val s = scenario("Simulation")
     .exec(http("request_0")
-      .get("/dlookup/service10")
+      .get("/lookup/service10")
     )
 
   setUp(s.inject(constantUsersPerSec(1100) during(10 seconds))).protocols(httpProtocol)
